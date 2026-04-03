@@ -1,0 +1,28 @@
+raw_path: data/raw/
+preprocessed_path: data/preprocessed/
+segmented_path: data/segmented/
+artifacts_path: artifacts/
+sampling_frequency: 50
+window_size_sec: 2.5
+window_slide_sec: 1
+timestamp_col: SoftwareTimestamp
+label_col: Label
+sublabel: Sublabel
+sensor_columns_raw:
+  - Accelerometer/Raw.X
+  - Accelerometer/Raw.Y
+  - Accelerometer/Raw.Z
+  - Gyroscope/Raw.X
+  - Gyroscope/Raw.Y
+  - Gyroscope/Raw.Z
+sensor_columns_model:
+  - Accelerometer/Raw.X
+  - Accelerometer/Raw.Y
+  - Accelerometer/Raw.Z
+  - Accelerometer/Magnitude
+  - Gyroscope/Raw.X
+  - Gyroscope/Raw.Y
+  - Gyroscope/Raw.Z
+  - Gyroscope/Magnitude
+f_high_cutoff: 5
+f_low_cutoff: 0.001
