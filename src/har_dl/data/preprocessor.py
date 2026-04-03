@@ -212,7 +212,7 @@ class DataPreprocessor:
     def process_all_data(self,
                          remove_outliers_flag: bool = False,
                          apply_filtering: bool = True,
-                         apply_smoothing: bool = True,
+                         apply_smoothing: bool = False,
                          add_magnitude: bool = True,
                          apply_scaling: bool = False,
                          scaler_type: str = "standard",
