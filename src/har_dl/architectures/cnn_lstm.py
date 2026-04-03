@@ -15,7 +15,9 @@ class ConvBlock(nn.Module):
         super().__init__()
         padding = kernel_size // 2
         layers: list[nn.Module] = [
-            nn.Conv1d(in_channels, out_channels, kernel_size, padding=padding, bias=False),
+            nn.Conv1d(
+                in_channels, out_channels, kernel_size, padding=padding, bias=False
+            ),
             nn.BatchNorm1d(out_channels),
             nn.LeakyReLU(negative_slope=negative_slope, inplace=True),
         ]
@@ -31,14 +33,18 @@ class CNNEncoder(nn.Module):
     def __init__(self, in_channels: int, dropout: float, negative_slope: float):
         super().__init__()
         self.encoder = nn.Sequential(
-            ConvBlock(in_channels, 32, kernel_size=7, pool=True, negative_slope=negative_slope),
+            ConvBlock(
+                in_channels, 32, kernel_size=7, pool=True, negative_slope=negative_slope
+            ),
             nn.Dropout(dropout),
             ConvBlock(32, 64, kernel_size=5, pool=True, negative_slope=negative_slope),
             nn.Dropout(dropout),
             ConvBlock(64, 128, kernel_size=3, negative_slope=negative_slope),
             ConvBlock(128, 128, kernel_size=3, negative_slope=negative_slope),
             nn.Dropout(dropout),
-            ConvBlock(128, 256, kernel_size=3, pool=True, negative_slope=negative_slope),
+            ConvBlock(
+                128, 256, kernel_size=3, pool=True, negative_slope=negative_slope
+            ),
             ConvBlock(256, 256, kernel_size=3, negative_slope=negative_slope),
             nn.Dropout(dropout),
             ConvBlock(256, 512, kernel_size=3, negative_slope=negative_slope),
@@ -116,7 +122,9 @@ class CNNLSTM(nn.Module):
     def _init_weights(self):
         for m in self.modules():
             if isinstance(m, nn.Conv1d):
-                nn.init.kaiming_normal_(m.weight, mode="fan_out", nonlinearity="leaky_relu")
+                nn.init.kaiming_normal_(
+                    m.weight, mode="fan_out", nonlinearity="leaky_relu"
+                )
             elif isinstance(m, nn.BatchNorm1d):
                 nn.init.ones_(m.weight)
                 nn.init.zeros_(m.bias)
