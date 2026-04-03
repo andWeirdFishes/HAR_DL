@@ -8,6 +8,7 @@ src/oco_har/pipelines/baseline/features/
 # Byte-compiled / optimized / DLL files
 __pycache__/
 *.py[cod]
+.idea
 *$py.class
 
 # C extensions
