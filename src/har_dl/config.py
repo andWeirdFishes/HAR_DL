@@ -1,8 +1,9 @@
 import yaml
 import os
-from har_dl.definitions import get_roots
+from har_dl.definitions import get_package_root, get_project_root
 
-project_root, package_root = get_roots()
+project_root = get_project_root()
+package_root = get_package_root()
 
 def load_config(config_path: str = os.path.join(project_root, "config.yaml")) -> dict:
     """
