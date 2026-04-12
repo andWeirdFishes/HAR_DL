@@ -16,10 +16,14 @@ def main():
 
     config = load_config()
 
-    config["raw_path"] = str(Path(project_root) / config["raw_path"])
+    config["raw_path"] = str(Path(project_root) / "data" / "raw" / "HAR_DL_raw_scaled")
     config["preprocessed_path"] = str(Path(project_root) / config["preprocessed_path"])
-    config["segmented_path"] = str(Path(project_root) / config.get("segmented_path", "data/segmented"))
-    config["artifacts_path"] = str(Path(project_root) / config.get("artifacts_path", "artifacts"))
+    config["segmented_path"] = str(
+        Path(project_root) / config.get("segmented_path", "data/segmented")
+    )
+    config["artifacts_path"] = str(
+        Path(project_root) / config.get("artifacts_path", "artifacts")
+    )
 
     config["f_low_cutoff"] = None
 
@@ -42,7 +46,7 @@ def main():
             apply_scaling=False,
             scaler_type="standard",
             group_axes=True,
-            save_files=True
+            save_files=True,
         )
 
         print("\n" + "=" * 60)
@@ -55,7 +59,9 @@ def main():
             total_files += num_files
             print(f"  {subject_id}: {num_files} files processed")
 
-        print(f"\nTotal: {total_files} files processed across {len(processed_data)} subjects")
+        print(
+            f"\nTotal: {total_files} files processed across {len(processed_data)} subjects"
+        )
         print("=" * 60)
 
     except Exception as e:

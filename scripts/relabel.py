@@ -10,7 +10,7 @@ def relabel_activity(label):
 
 
 def process_task1_files():
-    data_folder = os.path.join(get_project_root(), "data", "HAR_DL_raw_scaled")
+    data_folder = os.path.join(get_project_root(), "data", "preprocessed")
 
     print("Project root:", get_project_root())
     print("Data folder:", data_folder)
@@ -25,7 +25,7 @@ def process_task1_files():
         for f in files:
             if f.endswith(".csv") and f.startswith("task1"):
                 all_files.append(os.path.join(root, f))
-                
+
     print("All files:", all_files)
 
     csv_files = all_files
