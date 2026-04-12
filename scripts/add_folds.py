@@ -20,7 +20,7 @@ def assign_folds():
     print(f"Found files: {len(all_files)}")
     print(len(all_files))
     for i, file_path in enumerate(all_files):
-        fold = (i % 6) + 1
+        fold = ((i - 1) % 6) + 1
 
         print(f"{file_path} to fold {fold}")
 

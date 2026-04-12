@@ -2,7 +2,7 @@ import os
 from pathlib import Path
 from har_dl.config import load_config
 from har_dl.data.preprocessor import DataPreprocessor
-from har_dl.definitions import get_roots
+from har_dl.definitions import get_package_root, get_project_root
 
 
 def main():
@@ -10,14 +10,15 @@ def main():
     print("HAR Data Preprocessing Pipeline")
     print("=" * 60)
 
-    project_root, package_root = get_roots()
+    project_root = get_project_root()
+    package_root = get_package_root()
     print(f"Project Root: {project_root}")
     print(f"Package Root: {package_root}")
 
     config = load_config()
 
-    config["raw_path"] = str(Path(project_root) / "data" / "raw" / "HAR_DL_raw_scaled")
-    config["preprocessed_path"] = str(Path(project_root) / config["preprocessed_path"])
+    config["raw_path"] = str(Path(project_root) / "data" / "raw" / "HAR_DL_FEIT_2025")
+    config["preprocessed_path"] = str(Path(project_root) / "data" / "preprocessed" / "HAR_DL_FEIT_2025")
     config["segmented_path"] = str(
         Path(project_root) / config.get("segmented_path", "data/segmented")
     )
@@ -41,11 +42,10 @@ def main():
         processed_data = preprocessor.process_all_data(
             remove_outliers_flag=False,
             apply_filtering=True,
-            apply_smoothing=True,
+            apply_smoothing=False,
             add_magnitude=True,
             apply_scaling=False,
             scaler_type="standard",
-            group_axes=True,
             save_files=True,
         )
 

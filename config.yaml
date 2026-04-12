@@ -3,7 +3,7 @@ preprocessed_path: data/preprocessed/
 segmented_path: data/segmented/
 artifacts_path: artifacts/
 sampling_frequency: 50
-window_size_sec: 2.5
+window_size_sec: 4
 window_slide_sec: 1
 timestamp_col: SoftwareTimestamp
 label_col: Label
@@ -25,5 +25,4 @@ sensor_columns_model:
   - Gyroscope/Raw.Z
   - Gyroscope/Magnitude
 f_high_cutoff: 3
-f_low_cutoff: 0.001
-first_model_labels: ["walking", "running", "upright_still", "laying"]
+first_model_labels: ["walking", "running", "upright-still", "laying"]
