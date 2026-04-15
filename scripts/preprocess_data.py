@@ -5,9 +5,9 @@ from har_dl.data.preprocessor import DataPreprocessor
 from har_dl.definitions import get_package_root, get_project_root
 
 
-def main():
+def main() -> None:
     print("=" * 60)
-    print("HAR Data Preprocessing Pipeline")
+    print("HAR Data Preprocessing Pipeline - Second Model Ready")
     print("=" * 60)
 
     project_root = get_project_root()
@@ -17,7 +17,7 @@ def main():
 
     config = load_config()
 
-    config["raw_path"] = str(Path(project_root) / "data" / "raw" / "HAR_DL_FEIT_2025")
+    config["raw_path"] = str(Path(project_root) / "data" / "raw")    
     config["preprocessed_path"] = str(Path(project_root) / "data" / "preprocessed" / "HAR_DL_FEIT_2025")
     config["segmented_path"] = str(
         Path(project_root) / config.get("segmented_path", "data/segmented")
@@ -33,9 +33,11 @@ def main():
     print(f"  Preprocessed Path: {config['preprocessed_path']}")
     print(f"  Sampling Frequency: {config['sampling_frequency']} Hz")
     print(f"  High Cutoff: {config.get('f_high_cutoff')} Hz")
-    print(f"  Low Cutoff: {config.get('f_low_cutoff')}")
+    print(f"  Pressure Deriv: Enabled") # Added for visibility
     print(f"  Filter Order: {config.get('filter_order', 5)}")
-
+    print(f"Checking path: {config['raw_path']}")
+    files_found = list(Path(config['raw_path']).rglob("*.csv"))
+    print(f"Found {len(files_found)} CSV files in that directory.")
     preprocessor = DataPreprocessor(config=config)
 
     try:
@@ -46,6 +48,7 @@ def main():
             add_magnitude=True,
             apply_scaling=False,
             scaler_type="standard",
+            include_pressure=True, 
             save_files=True,
         )
 
@@ -66,7 +69,6 @@ def main():
 
     except Exception as e:
         print(f"\n[ERROR] Preprocessing failed: {e}")
-        print("Skipping to next step if applicable...")
         return None
 
     return processed_data

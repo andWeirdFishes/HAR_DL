@@ -1,38 +1,45 @@
 import os
 import pandas as pd
 from pathlib import Path
-from typing import List, Optional
+from typing import List, Optional, Union
 from har_dl.config import load_config
 
 
 class DataLoader:
-    def __init__(self, config: Optional[dict] = None):
+    def __init__(self, config: Optional[dict] = None) -> None:
         self.config = config or load_config()
         self.raw_path = Path(self.config["raw_path"])
         self.processed_path = Path(self.config["preprocessed_path"])
         self.label_col = self.config["label_col"]
         self.sublabel_col = self.config["sublabel"]
         self.sensor_columns = self.config["sensor_columns_raw"]
+        self.datasets_with_sublabels = self.config.get("datasets_with_sublabels", [])
 
-    def get_all_files(self, folder: Path) -> list:
+    def get_all_files(self, folder: Path) -> List[Path]:
         return [Path(root) / file
                 for root, _, files in os.walk(folder)
                 for file in files if file.endswith(".csv")]
 
-    def load_single_file(self, file_path: Path, subject_name: str) -> pd.DataFrame | None:
+    def load_single_file(self, file_path: Path, subject_name: str, dataset_name: str) -> Optional[pd.DataFrame]:
         try:
             df = pd.read_csv(file_path)
-            expected_cols = self.sensor_columns + [self.label_col] + [self.sublabel_col]
-            if not all(col in df.columns for col in expected_cols):
+            
+            required_cols = self.sensor_columns + [self.label_col]
+            
+            # Check if the dataset name is in the allowed sublabel list
+            if dataset_name in self.datasets_with_sublabels:
+                required_cols.append(self.sublabel_col)
+
+            if not all(col in df.columns for col in required_cols):
                 print(f"Skipping {file_path.name} – missing required columns.")
                 return None
 
-            if self.label_col in df.columns:
-                if df.empty:
-                    print(f"Skipping {file_path.name} – all rows filtered out.")
-                    return None
+            if df.empty:
+                print(f"Skipping {file_path.name} – file is empty.")
+                return None
 
             df["Subject"] = subject_name
+            df["Dataset"] = dataset_name
             df["File"] = str(file_path.relative_to(self.raw_path))
             return df
         except Exception as e:
@@ -42,36 +49,46 @@ class DataLoader:
     def load_raw_datasets(self) -> List[pd.DataFrame]:
         all_dfs = []
 
-        for subject_folder in self.raw_path.iterdir():
-            if not subject_folder.is_dir():
+        for dataset_folder in self.raw_path.iterdir():
+            if not dataset_folder.is_dir():
                 continue
+            
+            dataset_name = dataset_folder.name
 
-            subject_name = subject_folder.name
+            for subject_folder in dataset_folder.iterdir():
+                if not subject_folder.is_dir():
+                    continue
 
-            for csv_file in subject_folder.glob("*.csv"):
-                df = self.load_single_file(csv_file, subject_name)
-                if df is not None:
-                    all_dfs.append(df)
+                subject_name = subject_folder.name
+
+                for csv_file in subject_folder.glob("*.csv"):
+                    df = self.load_single_file(csv_file, subject_name, dataset_name)
+                    if df is not None:
+                        all_dfs.append(df)
 
         return all_dfs
 
     def load_processed_datasets(self) -> List[pd.DataFrame]:
         all_dfs = []
 
-        for subject_folder in self.processed_path.iterdir():
-            if not subject_folder.is_dir():
+        for dataset_folder in self.processed_path.iterdir():
+            if not dataset_folder.is_dir():
                 continue
 
-            subject_name = subject_folder.name
+            for subject_folder in dataset_folder.iterdir():
+                if not subject_folder.is_dir():
+                    continue
 
-            for csv_file in subject_folder.rglob("*.csv"):
-                try:
-                    df = pd.read_csv(csv_file, low_memory=False)
-                    df["Subject"] = subject_name
-                    df["File"] = str(csv_file.relative_to(self.processed_path))
-                    all_dfs.append(df)
-                except Exception as e:
-                    print(f"Failed to load {csv_file}: {e}")
+                subject_name = subject_folder.name
+
+                for csv_file in subject_folder.rglob("*.csv"):
+                    try:
+                        df = pd.read_csv(csv_file, low_memory=False)
+                        df["Subject"] = subject_name
+                        df["File"] = str(csv_file.relative_to(self.processed_path))
+                        all_dfs.append(df)
+                    except Exception as e:
+                        print(f"Failed to load {csv_file}: {e}")
 
         return all_dfs
 

@@ -15,6 +15,7 @@ sensor_columns_raw:
   - Gyroscope/Raw.X
   - Gyroscope/Raw.Y
   - Gyroscope/Raw.Z
+  - Pressure/Raw
 sensor_columns_model:
   - Accelerometer/Raw.X
   - Accelerometer/Raw.Y
@@ -24,5 +25,8 @@ sensor_columns_model:
   - Gyroscope/Raw.Y
   - Gyroscope/Raw.Z
   - Gyroscope/Magnitude
-f_high_cutoff: 3
+  - Pressure/Raw.Deriv
+f_high_cutoff: 4
 first_model_labels: ["walking", "running", "upright-still", "laying"]
+second_model_labels: ["sitting", "standing", "walking", "running", "laying", "stairs_up", "stairs_down"]
+datasets_with_sublabels: ["HAR_DL_FEIT_2025"]

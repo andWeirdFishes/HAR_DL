@@ -1,7 +1,10 @@
 import os
+from har_dl.config import load_config
 import pandas as pd
 from har_dl.definitions import get_project_root
 
+
+config = load_config()
 
 def relabel_activity(label):
     """Map Label to Activity column."""
@@ -34,11 +37,10 @@ def process_task1_files():
     for file in csv_files:
         print(f"Processing file: {file}")
         df = pd.read_csv(file)
-        df = df[(df["Label"]!="laying") | (df["Sublabel"]=="laying_back")]
+        df = df[df["Label"].isin(config["second_model_labels"])]
         if "Label" not in df.columns:
             print(f"Warning: 'Label' column not found in {file}. Skipping.")
             continue
-        df["Activity"] = df["Label"].apply(relabel_activity)
         df.to_csv(file, index=False)
         print(f"Finished processing file: {file}")
 

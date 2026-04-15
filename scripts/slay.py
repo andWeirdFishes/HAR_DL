@@ -6,9 +6,9 @@ import pandas as pd
 
 config = load_config()
 
-path = Path(os.path.join(definitions.get_project_root(),config["preprocessed_path"]))
+path = Path(os.path.join(definitions.get_project_root(),config["raw_path"],"HAR_DL_FEIT_2025"))
 
 for file in path.rglob('*.csv'):
     df = pd.read_csv(file)
-    print(df[df['Label']=='laying']['Sublabel'].unique())
+    print(df['Label'].unique())
 

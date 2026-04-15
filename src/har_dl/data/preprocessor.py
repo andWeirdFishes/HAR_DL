@@ -156,11 +156,28 @@ class DataPreprocessor:
 
         return scaled_dfs
 
+    def add_pressure_features(self, df: pd.DataFrame, window: int = 3000) -> pd.DataFrame:
+            from scipy.signal import savgol_filter
+            df_p = df.copy()
+
+            if "Pressure/Raw" not in df_p.columns:
+                return df_p
+
+            p_raw = df_p["Pressure/Raw"]
+            p_med = p_raw.rolling(window=101, center=True).median().bfill().ffill()
+
+            deriv = savgol_filter(p_med, window_length=301, polyorder=2, deriv=1)
+            
+            df_p["Pressure/Raw.Deriv"] = deriv * self.sampling_frequency
+
+            return df_p
+
     def preprocess_single_file(self, df: pd.DataFrame,
                                remove_outliers_flag: bool = False,
                                apply_filtering: bool = True,
                                apply_smoothing: bool = True,
-                               add_magnitude: bool = True) -> pd.DataFrame:
+                               add_magnitude: bool = True,
+                               include_pressure: bool = False) -> pd.DataFrame:
         processed_df = df.copy()
 
         if remove_outliers_flag:
@@ -174,6 +191,9 @@ class DataPreprocessor:
 
         if add_magnitude:
             processed_df = self.add_magnitude_features(processed_df)
+
+        if include_pressure:
+            processed_df = self.add_pressure_features(processed_df)
 
         return processed_df
 
@@ -217,6 +237,7 @@ class DataPreprocessor:
                          apply_scaling: bool = False,
                          scaler_type: str = "standard",
                          group_axes: bool = True,
+                         include_pressure: bool = False,
                          save_files: bool = True) -> Dict[str, List[pd.DataFrame]]:
         print("=== STARTING DATA PREPROCESSING ===")
 
@@ -238,7 +259,8 @@ class DataPreprocessor:
                     remove_outliers_flag=remove_outliers_flag,
                     apply_filtering=apply_filtering,
                     apply_smoothing=apply_smoothing,
-                    add_magnitude=add_magnitude
+                    add_magnitude=add_magnitude,
+                    include_pressure=include_pressure
                 )
                 processed_dfs.append(processed_df)
 
