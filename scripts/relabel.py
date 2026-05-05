@@ -8,7 +8,7 @@ config = load_config()
 
 def relabel_activity(label):
     """Map Label to Activity column."""
-    mapping = {"sitting": "upright-still", "standing": "upright-still"}
+    mapping = {"sitting": "upright_still", "standing": "upright_still"}
     return mapping.get(label, label)
 
 
@@ -37,10 +37,11 @@ def process_task1_files():
     for file in csv_files:
         print(f"Processing file: {file}")
         df = pd.read_csv(file)
-        df = df[df["Label"].isin(config["second_model_labels"])]
         if "Label" not in df.columns:
             print(f"Warning: 'Label' column not found in {file}. Skipping.")
             continue
+        df["WindowLabel"] = df["Label"].apply(relabel_activity)
+        df = df[df["Label"].isin(config["second_model_labels"])]
         df.to_csv(file, index=False)
         print(f"Finished processing file: {file}")
 

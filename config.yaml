@@ -28,5 +28,5 @@ sensor_columns_model:
   - Pressure/Raw.Deriv
 f_high_cutoff: 4
 first_model_labels: ["walking", "running", "upright-still", "laying"]
-second_model_labels: ["sitting", "standing", "walking", "running", "laying", "stairs_up", "stairs_down"]
+second_model_labels: ["upright_still", "walking", "running", "laying", "stairs_up", "stairs_down", "transition_up", "transition_down"]
 datasets_with_sublabels: ["HAR_DL_FEIT_2025"]
